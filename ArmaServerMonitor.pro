@@ -13,6 +13,8 @@ TEMPLATE = app
 QMAKE_LFLAGS += /FS
 QMAKE_CXXFLAGS +=/FS
 
+win32:CONFIG(debug, debug|release): LIBS += -lqwindowsd -lqtfreetyped -lQt5PlatformSupportd
+
 SOURCES += main.cpp\
         mainwindow.cpp \
     asmconnector.cpp \

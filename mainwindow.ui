@@ -21,15 +21,31 @@
        <enum>QLayout::SetMinimumSize</enum>
       </property>
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="button_connect">
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>100</width>
           <height>23</height>
          </size>
         </property>
         <property name="text">
-         <string>start</string>
+         <string>connect</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="edit_SocketAddress">
+        <property name="maximumSize">
+         <size>
+          <width>112</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="inputMask">
+         <string/>
+        </property>
+        <property name="placeholderText">
+         <string>0.0.0.0:24000</string>
         </property>
        </widget>
       </item>
@@ -48,7 +64,7 @@
          </size>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string/>
         </property>
        </widget>
       </item>

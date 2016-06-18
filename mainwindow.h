@@ -17,10 +17,10 @@ class MainWindow : public QMainWindow
 		~MainWindow();
 		asmConnector asmc;
 		quint64 starttime;
-		QCPGraph* getGraph(QString name,int &index);
+		QCPGraph* getGraph(QString const& graphName/*,int &graphIndex*/);
 		void gotData(ARMA_SERVER_INFO data);
 	private slots:
-		void on_pushButton_clicked();
+		void on_button_connect_clicked();
 
 	private:
 		Ui::MainWindow *ui;

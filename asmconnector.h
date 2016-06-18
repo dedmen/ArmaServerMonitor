@@ -33,7 +33,7 @@ class asmConnector : public QObject
 	public:
 		explicit asmConnector(QObject *parent = 0);
 		~asmConnector();
-		void init();
+		void init(QString const& socketAddress);
 		void disconnect();
 		QTcpSocket sock;
 		QTimer timer;

@@ -11,39 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	//TODO add button to select/unselect all items
 	starttime = QDateTime::currentDateTime().toTime_t();
 	ui->plot->setLocale(QLocale(QLocale::English, QLocale::UnitedKingdom));
-	// seconds of current time, we'll use it as starting point in time for data:
-	srand(5); // set the random seed, so we always get the same random data
-	// create multiple graphs:
-	/* for (int gi=0; gi<20; ++gi)
-	{
-	  ui->plot->addGraph();
-	  QPen pen;
-	  pen.setColor(QColor(255/4.0*gi,160,50,150));//QColor(0, 0, 255, 200)
-	  pen.setWidth(3);
-	  ui->plot->graph()->setLineStyle(QCPGraph::lsStepLeft);//lsLine
-	  ui->plot->graph()->setPen(pen);
-	  //ui->plot->graph()->setBrush(QBrush(QColor(255/4.0*gi,160,50,150)));
-	  QCPScatterStyle myScatter;
-	  myScatter.setShape(QCPScatterStyle::ssCross);
-	  myScatter.setPen(pen);
-	  myScatter.setBrush(Qt::white);
-	  myScatter.setSize(5);
-	 ui->plot->graph()->setScatterStyle(myScatter);
-	  // generate random walk data:
-	  QVector<double> time(24*250), value(24*250);
-	  for (int i=0; i<250; ++i)//24*
-	  {
-		time[i] = now + 24*3600*i;
-		if (i == 0)
-		  value[i] = (i/50.0+1)*(rand()/(double)RAND_MAX-0.5);
-		else
-		  value[i] = fabs((rand() % 2 == 1) ? gi : 0); //fabs(value[i-1])*(1+0.02/4.0*(4-gi)) + (i/50.0+1)*(rand()/(double)RAND_MAX-0.5);
-	  }
-	  ui->plot->graph()->setData(time, value);
-	  ui->plot->graph()->setVisible(false);
-	}
-ui->plot->graph()->setVisible(true);
-*/
+
 	ui->plot->setInteraction(QCP::iSelectPlottables,true);
 	ui->plot->setInteraction(QCP::iMultiSelect,true);
 	ui->plot->setInteraction(QCP::iRangeDrag,true);
@@ -52,10 +20,8 @@ ui->plot->graph()->setVisible(true);
 	ui->plot->yAxis->axisRect()->setRangeDrag(Qt::Horizontal);
 	ui->plot->xAxis->axisRect()->setRangeZoom(Qt::Horizontal);
 	ui->plot->yAxis->axisRect()->setRangeZoom(Qt::Horizontal);
-	//connect (ui->plot,&QCustomPlot::selectionChangedByUser,this,&MainWindow::selectionChanged);
-
-	//ui->plot->axisRect()->setRangeDrag(Qt::Horizontal);
-	// configure bottom axis to show date and time instead of number:
+	
+	// bottom axis shows time
 	ui->plot->xAxis->setTickLabelType(QCPAxis::ltDateTime);
 	ui->plot->xAxis->setDateTimeFormat("HH:mm:ss");//dd.MM\n
 	// set a more compact font size for bottom and left axis tick labels:
@@ -76,7 +42,7 @@ ui->plot->graph()->setVisible(true);
 	//ui->plot->yAxis->setTickVectorLabels(QVector<QString>() << "Not so\nhigh" << "Very\nhigh");
 	// set axis labels:
 	ui->plot->xAxis->setLabel("Time");
-	ui->plot->yAxis->setLabel("Numba");
+	ui->plot->yAxis->setLabel("Number");
 	// make top and right axes visible but without ticks and labels:
 	ui->plot->xAxis2->setVisible(true);
 	ui->plot->yAxis2->setVisible(true);
@@ -91,27 +57,27 @@ ui->plot->graph()->setVisible(true);
 	ui->plot->yAxis->setRange(0, 60);
 	// show legend:
 	ui->plot->legend->setVisible(true);
-	//int index;
-	//getGraph("player",index)->addData(starttime,1);
-	//getGraph("player",index)->addData(starttime+1,2);
-	//getGraph("player",index)->addData(starttime+3,3);
-	//getGraph("player",index)->addData(starttime+4,4);
-	//getGraph("player",index)->addData(starttime+5,5);
+	//test code
+	//getGraph("player")->addData(starttime,1);
+	//getGraph("player")->addData(starttime+1,2);
+	//getGraph("player")->addData(starttime+3,3);
+	//getGraph("player")->addData(starttime+4,4);
+	//getGraph("player")->addData(starttime+5,5);
 	//ui->plot->replot();
 }
 
-QCPGraph* MainWindow::getGraph(QString name,int &index){
+QCPGraph* MainWindow::getGraph(QString const& graphName/*,int &graphIndex*/){
 	QCPGraph* graph;
 	for (int var = 0; var < ui->plot->graphCount(); ++var) {
 		graph = ui->plot->graph(var);
-		if (graph->name().contains(name)){
-			index = var;
+		if (graph->name().contains(graphName)){
+			//graphIndex = var;
 			return graph;
 		}
 	}
-
+	//graph not found so create a new one
 	ui->plot->addGraph();
-	index = ui->plot->graphCount();
+	//graphIndex = ui->plot->graphCount();
 	QPen pen;
 	pen.setColor(QColor(rand() % 255 ,rand() % 255,rand() % 255));//QColor(0, 0, 255, 200)
 	pen.setWidth(1);
@@ -121,7 +87,7 @@ QCPGraph* MainWindow::getGraph(QString name,int &index){
 	qDebug() << pen.color();
 	ui->plot->graph()->setLineStyle(QCPGraph::lsLine);//lsLine
 	ui->plot->graph()->setPen(pen);
-	ui->plot->graph()->setName(name);
+	ui->plot->graph()->setName(graphName);
 	//ui->plot->graph()->setBrush(QBrush(invert));
 	QCPScatterStyle myScatter;
 	myScatter.setShape(QCPScatterStyle::ssCross);
@@ -134,7 +100,7 @@ QCPGraph* MainWindow::getGraph(QString name,int &index){
 	//ui->plot->graph()->setScatterStyle(myScatter);
 	ui->plot->graph()->setVisible(true);
 	ui->plot->graph()->setSelectable(true);
-	qDebug() << "addGraph" << name;
+	qDebug() << "addGraph" << graphName;
 
 	//QListWidgetItem* item = new QListWidgetItem(name);
 	//item->setBackgroundColor(pen.color());
@@ -152,17 +118,15 @@ QCPGraph* MainWindow::getGraph(QString name,int &index){
 
 void MainWindow::gotData(ARMA_SERVER_INFO data)
 {
-
-	int index;
 	auto timestamp = QString::number(QDateTime::currentDateTime().toTime_t()).toDouble();
 
 	//qDebug() << "dataIn" << timestamp;
 
-	QCPGraph* graphPlayerCount = getGraph("player",index);
-	QCPGraph* graphAILocal = getGraph("ailocal",index);
-	QCPGraph* graphAIRemote = getGraph("airemote",index);
-	QCPGraph* graphSFPS = getGraph("sfps",index);
-	QCPGraph* graphScps = getGraph("scps",index);
+	QCPGraph* graphPlayerCount = getGraph("player");
+	QCPGraph* graphAILocal = getGraph("ailocal");
+	QCPGraph* graphAIRemote = getGraph("airemote");
+	QCPGraph* graphSFPS = getGraph("sfps");
+	QCPGraph* graphScps = getGraph("scps");
 	//QCPGraph* graphPlayerCount = getGraph("pcount",index);
 	graphPlayerCount->addData(timestamp,data.PLAYER_COUNT);
 	graphPlayerCount->setName("player ("+QString::number(data.PLAYER_COUNT)+")");
@@ -174,9 +138,7 @@ void MainWindow::gotData(ARMA_SERVER_INFO data)
 	graphSFPS->setName("sfps ("+QString::number(data.SERVER_FPS/1000)+")");
 	graphScps->addData(timestamp,data.FSM_CE_FREQ/1000);
 	graphScps->setName("scps ("+QString::number(data.FSM_CE_FREQ/1000)+")");
-	ui->label_Mission->setText(data.MISSION);
-
-
+	ui->label_Mission->setText(QStringLiteral("Mission:") + data.MISSION);
 
 	ui->plot->replot();
 
@@ -187,9 +149,8 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_button_connect_clicked()
 {
 	connect(&asmc,&asmConnector::gotData,this,&MainWindow::gotData);
-	asmc.init();
-
+	asmc.init(ui->edit_SocketAddress->text());
 }

@@ -10,14 +10,16 @@ asmConnector::~asmConnector()
 
 }
 
-void asmConnector::init()
+void asmConnector::init(QString const& socketAddress)
 {
 	connect(&sock,&QTcpSocket::readyRead,this,&asmConnector::readyRead);
-	sock.connectToHost("arma.dedmen.de",24000);
+	auto addressParts = socketAddress.split(':');
+	if (addressParts.size() != 2)
+		return;
+	sock.connectToHost(addressParts.first(), addressParts[1].toInt());
 	connect(&timer,&QTimer::timeout,this,&asmConnector::requestData);
 	timer.setInterval(1000);
 	timer.start();
-	//qDebug() << "init" << sock.state();
 }
 
 void asmConnector::disconnect()
@@ -31,10 +33,8 @@ void asmConnector::readyRead()
 	if (data.length() < 130)
 		return;
 
-	ARMA_SERVER_INFO *dt = (struct ARMA_SERVER_INFO*) data.data();
+	ARMA_SERVER_INFO *dt = reinterpret_cast<ARMA_SERVER_INFO*>(data.data());
 	emit gotData(*dt);//I hope this copies
-
-
 }
 
 void asmConnector::requestData()
